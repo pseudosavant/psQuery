@@ -1,0 +1,69 @@
+﻿<!doctype html>
+<html>
+    <head>
+        <title>psQuery Test</title>
+        <style>
+            html {
+                font-family: Calibri, Arial, sans-serif;
+                font-size: 12px;
+            }
+
+            h1 {
+                font-size: 1.25em;
+            }
+
+            .test {
+                width: 100px; height: 50px;
+                border: 1px solid black;
+                display: inline-block;
+            }
+            .red { background: red; }
+            .bold { font-weight: bold; }
+            .underline { text-decoration: underline; }
+        </style>
+    </head>
+    <body>
+        <div class="test">This is a test</div>
+        <div class="test">This is a test</div>
+        <h1>Add/Remove Classes</h1>
+        <button class="red" onclick="psQuery('.test').addClass('red');">Add .red</button>
+        <button class="bold" onclick="psQuery('.test').addClass('bold');">Add .bold</button>
+        <button class="underline" onclick="psQuery('.test').addClass('underline');">Add .underline</button>
+        <button class="red" onclick="psQuery('.test').removeClass('red');">Remove .red</button>
+        <button class="bold" onclick="psQuery('.test').removeClass('bold');">Remove .bold</button>
+        <button class="underline" onclick="psQuery('.test').removeClass('underline');">Remove .underline</button>
+
+        <h1>Get/Set HTML</h1>
+        <button onclick="alert(psQuery('.test').html());">Alert html</button>
+        <button onclick="psQuery('.test').html('');">Clear html</button>
+        <button onclick="psQuery('.test').html('This is a test');">Restore html</button>
+
+        <h1>Event Listeners</h1>
+        <button onclick="psQuery('.test').click(alertClickListener);">Click listener on</button>
+        <button onclick="psQuery('.test').off('click', alertClickListener);">Click listener off</button>
+        <button onclick="psQuery('.test').on('mouseover', over);">Mouse over on</button>
+        <button onclick="psQuery('.test').off('mouseover', over);">Mouse over off</button>
+        <button onclick="psQuery('.test').on('mouseout', out);">Mouse out on</button>
+        <button onclick="psQuery('.test').off('mouseout', out);">Mouse out off</button>
+
+        <h1>Show/Hide</h1>
+        <button onclick="psQuery('.test').show();">Show</button>
+        <button onclick="psQuery('.test').hide();">Hide</button>
+
+        <script src="../src/core.js"></script>
+        <script>
+            var alertClickListener = function (e) {
+                alert(e);
+            }
+
+            var over = function () {
+                $('.test').addClass('red');
+            };
+
+            var out = function () {
+                $('.test').removeClass('red');
+            };
+
+        </script>
+    </body>
+</html>

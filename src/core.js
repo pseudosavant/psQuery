@@ -5,6 +5,18 @@
     var utils = global.utils = {
         isFunction: function(fn) {
             return (!!fn && typeof fn === 'function');
+        },
+        lastArgumentCallback: function (args, invoke) {
+            var lastArgument = args[args.length - 1];
+
+            if (utils.isFunction(lastArgument)){
+                if (invoke) {
+                    lastArgument();
+                }
+                return lastArgument;
+            } else {
+                return undefined;
+            }
         }
     };
 
@@ -72,6 +84,9 @@
         nth: function(n) {
             var pos = (n < 0 ? this.els.length + n : n);
             return psQuery.fn.init(this.els[pos]);
+        },
+        get: function(n) {
+            return this.nth(n);
         },
         first: function () {
             return this.nth(0);
@@ -177,8 +192,7 @@
             this.on('click', callback);
         },
         on: function (events) {
-            var lastArgument = arguments[arguments.length - 1],
-                callback = (utils.isFunction(lastArgument) ? lastArgument : null),
+            var callback = utils.lastArgumentCallback(arguments),
                 ev = events.split(' ');
 
             this.each(function () {
@@ -190,8 +204,7 @@
             return this;
         },
         off: function (events) {
-            var lastArgument = arguments[arguments.length - 1],
-                callback = (utils.isFunction(lastArgument) ? lastArgument : null),
+            var callback = utils.lastArgumentCallback(arguments),
                 ev = events.split(' ');
 
             this.each(function () {

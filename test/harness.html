@@ -1,0 +1,100 @@
+﻿<!doctype html>
+<html>
+    <head>
+        <title>psQuery Test</title>
+        <style>
+            html {
+                font-family: Calibri, Arial, sans-serif;
+                font-size: 12px;
+            }
+
+            h1 {
+                font-size: 1.25em;
+            }
+
+            .test {
+                border: 1px solid black;
+                display: inline-block;
+                padding: 10px;
+            }
+
+            .test:first-of-type::before {
+                content: '1. ';
+            }
+
+            .test:nth-of-type(2n)::before {
+                content: '2. ';
+            }
+
+            .test:nth-of-type(3n)::before {
+                content: '3. ';
+            }
+
+            .test:last-of-type::before {
+                content: '4. ';
+            }
+
+            .red { background: red; }
+            .bold { font-weight: bold; }
+            .underline { text-decoration: underline; }
+        </style>
+    </head>
+    <body>
+        <div class="test">This test is <strong>1</strong></div>
+        <div class="test">This test is <strong>2</strong></div>
+        <div class="test">This test is <strong>3</strong></div>
+        <div class="test">This test is <strong>4</strong></div>
+        <h1>Add/Remove Classes</h1>
+        <button class="red" onclick="$test.addClass('red');">Add .red</button>
+        <button class="bold" onclick="$test.addClass('bold');">Add .bold</button>
+        <button class="underline" onclick="$test.addClass('underline');">Add .underline</button>
+        <button class="underline bold red" onclick="$test.addClass('underline').addClass('bold red');">Add all three</button>
+        <button class="red" onclick="$test.removeClass('red');">Remove .red</button>
+        <button class="bold" onclick="$test.removeClass('bold');">Remove .bold</button>
+        <button class="underline" onclick="$test.removeClass('underline');">Remove .underline</button>
+
+        <h1>Get/Set HTML/Text</h1>
+        <button onclick="alert($test.html());">Alert html</button>
+        <button onclick="$test.html('');">Clear html</button>
+        <button onclick="$test.html('This is a test');">Restore html</button>
+        <button onclick="alert($test.last().text());">Alert text</button>
+        <button onclick="$test.text('');">Clear text</button>
+        <button onclick="$test.text('This is a test');">Restore text</button>
+
+        <h1>Event Listeners</h1>
+        <button onclick="$test.click(alertClickListener);">Click listener on</button>
+        <button onclick="$test.off('click', alertClickListener);">Click listener off</button>
+        <button onclick="$test.on('mouseover', over);">Mouse over on</button>
+        <button onclick="$test.off('mouseover', over);">Mouse over off</button>
+        <button onclick="$test.on('mouseout', out);">Mouse out on</button>
+        <button onclick="$test.off('mouseout', out);">Mouse out off</button>
+
+        <h1>Show/Hide</h1>
+        <button onclick="$test.show();">Show</button>
+        <button onclick="$test.hide();">Hide</button>
+
+        <h1>Selector Tests</h1>
+        <button onclick="psQuery('.test').first().addClass('red');">psQuery('.test').first()</button>
+        <button onclick="$test.nth(1).addClass('red');">$test.nth(1)</button>
+        <button onclick="psQuery(document.querySelectorAll('.test')[2]).addClass('red');">$(document.querySelectorAll('.test')[2]);</button>
+        <button onclick="$test.last().addClass('red');">$test.last()</button>
+
+        <script src="../src/core.js"></script>
+        <script>
+            var $test = psQuery('.test');
+
+            var alertClickListener = function (e) {
+                alert(e.target.innerHTML);
+            }
+
+            var over = function () {
+                $(this).addClass('red');
+            };
+
+            var out = function () {
+                $(this).removeClass('red');
+            };
+
+        </script>
+    </body>
+</html>

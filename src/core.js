@@ -1,14 +1,8 @@
 (function (global) {
     'use strict';
-    var utils = {
-        loop: function (opts) {
-            var fn = opts.fn;
-            var els = opts.els;
+    var debug = true;
 
-            for (var i = 0, l = els.length; i < l; i++) {
-                fn(els[i], opts);
-            }
-        },
+    var utils = global.utils = {
         isFunction: function(fn) {
             return (!!fn && typeof fn === 'function');
         }
@@ -30,7 +24,7 @@
     };
 
     var psQuery = function (selector) {
-        return psQuery.fn.init(selector);
+        return new psQuery.fn.init(selector);
     };
 
     psQuery.fn = psQuery.prototype = {
@@ -41,74 +35,100 @@
             }
 
             try {
-                this.els = document.querySelectorAll(selector);
-                this.el = this.els[0];
+                if (!selector) {
+                    throw 'Error: Invalid selector';
+                } else if (!!selector.nodeType && (selector.nodeType === 1 || selector.nodeType === 9)) {
+                    this.els = [selector];
+                } else if (typeof selector === 'string') {
+                    this.els = document.querySelectorAll(selector);
+                }
+
+                if (this.els.length === 0) {
+                    throw 'Error: No elements found with that selector.';
+                }
+
                 return this;
             } catch (e) {
-                return null;
+                if (!debug) {
+                    return undefined;
+                } else {
+                    throw e;
+                }
             }
         },
-        eq: function (i) {
-            var len = this.length,
-                j = +i + (i < 0 ? len : 0);
-            return (j >= 0 && j < len ? [this[j]] : []);
+        each: function (fn) {
+            var els = this.els;
+
+            if (!utils.isFunction(fn)) {
+                throw 'Error: no function supplied to loop.';
+            }
+
+            for (var i = 0, l = els.length; i < l; i++) {
+                if (fn.call(els[i], i) === false) {
+                    break;
+                }
+            }
+        },
+        nth: function(n) {
+            var pos = (n < 0 ? this.els.length + n : n);
+            return psQuery.fn.init(this.els[pos]);
         },
         first: function () {
-            return this.eq(0);
+            return this.nth(0);
         },
         last: function () {
-            return this.eq(-1);
+            return this.nth(-1);
+        },
+        val: function(val) {
+            if (val) {
+                this.each(function () {
+                    this.value = val;
+                });
+            } else {
+                return this.els[0].value;
+            }
         },
         html: function (html) {
             if (typeof html === 'string') {
-                var set = function(el, opts) {
-                    el.innerHTML = opts.html;
-                };
-
-                var opts = {
-                    els: this.els,
-                    fn: set,
-                    html: html
-                };
-
-                utils.loop(opts);
+                this.each(function () {
+                    this.innerHTML = html;
+                });
 
                 return this;
             } else {
-                return this.el.innerHTML;
+                return this.els[0].innerHTML;
+            }
+        },
+        text: function(text) {
+            if (typeof text === 'string') {
+                this.each(function () {
+                    this.innerText = text;
+                });
+
+                return this;
+            } else {
+                return this.els[0].innerText;
             }
         },
         hide: function() {
-            var set = function (el) {
-                el.style.display = 'none';
+            var set = function () {
+                this.style.display = 'none';
             };
 
-            var opts = {
-                els: this.els,
-                fn: set
-            };
-
-            utils.loop(opts);
+            this.each(set);
         },
         show: function() {
-            var set = function (el) {
-                el.style.display = '';
+            var set = function () {
+                this.style.display = '';
             };
 
-            var opts = {
-                els: this.els,
-                fn: set
-            };
-
-            utils.loop(opts);
+            this.each(set);
         },
         addClass: function (classes) {
-            var add = function (el, opts) {
-                var c = opts.c;
-                
-                var merged = (el.className + ' ' + c.trim()).split(' ');
-                var uniques = {};
-                var union = [];
+            var add = function () {
+                var merged = (this.className + ' ' + classes.trim()).split(' '),
+                    uniques = {},
+                    union = [];
                 
                 for (var i = 0, l = merged.length; i < l; i++) {
                     uniques[merged[i]] = true;
@@ -120,52 +140,34 @@
                     }
                 }
 
-                el.className = union.join(' ').trim();
+                this.className = union.join(' ').trim();
             };
 
-            var opts = {
-                els: this.els,
-                fn: add,
-                c: classes
-            };
-
-            utils.loop(opts);
+            this.each(add);
             return this;
         },
         removeClass: function(classes){
-            var remove = function (el, opts) {
-                var c = opts.c;
-                var existing = el.className + '';
-                var removing = c.trim().split(' ');
+            var remove = function () {
+                var existing = this.className + '';
+                var removing = classes.trim().split(' ');
 
                 for (var i = 0; i < removing.length; i++) {
                     existing = existing.replace(removing[i], '');
                 }
 
-                el.className = existing;
+                this.className = existing;
             };
 
-            var opts = {
-                els: this.els,
-                fn: remove,
-                c: classes
-            };
-
-            utils.loop(opts);
+            this.each(remove);
             return this;
         },
         css: function (css) {
-            var set = function (el, opts) {
-                return opts + el;
+            var set = function () {
+                return undefined;
             };
 
             if (css) { // Set
-                var opts = {
-                    els: this.els,
-                    fn: set,
-                    css: css
-                };
-                utils.loop(opts);
+                this.each(set);
             } else { // Get css for first element
                 return '';
             }
@@ -175,53 +177,44 @@
             this.on('click', callback);
         },
         on: function (events) {
-            var add = function (el, opts) {
-                var events = opts.events.split(' ');
+            var lastArgument = arguments[arguments.length - 1],
+                callback = (utils.isFunction(lastArgument) ? lastArgument : null),
+                ev = events.split(' ');
 
-                for (var i = 0; i < events.length; i++) {
-                    el.addEventListener(events[i], opts.callback, false);
+            this.each(function () {
+                for (var i = 0; i < ev.length; i++) {
+                    this.addEventListener(ev[i], callback, false);
                 }
-            };
+            });
 
-            var callbackArg = arguments[arguments.length - 1];
-            var callback = (utils.isFunction(callbackArg) ? callbackArg : null);
-
-            var opts = {
-                els: this.els,
-                fn: add,
-                events: events,
-                callback: callback
-            };
-
-            utils.loop(opts);
             return this;
         },
         off: function (events) {
-            var remove = function (el, opts) {
-                var events = opts.events.split(' ');
-                for (var i = 0; i < events.length; i++) {
-                    el.removeEventListener(events[i], opts.callback, false);
+            var lastArgument = arguments[arguments.length - 1],
+                callback = (utils.isFunction(lastArgument) ? lastArgument : null),
+                ev = events.split(' ');
+
+            this.each(function () {
+                for (var i = 0; i < ev.length; i++) {
+                    this.removeEventListener(ev[i], callback, false);
                 }
-            };
+            });
 
-            var callbackArg = arguments[arguments.length - 1];
-            var callback = (utils.isFunction(callbackArg) ? callbackArg : null);
-
-            var opts = {
-                els: this.els,
-                fn: remove,
-                events: events,
-                callback: callback
-            };
-
-            utils.loop(opts);
             return this;
         },
         ajax: function (opts) {
             opts = null;
             return this;
+        },
+        data: function () {
+
+        },
+        attr: function () {
+
         }
     };
+
+    psQuery.fn.init.prototype = psQuery.fn;
 
     global.psQuery = psQuery;
     if (!global.$) {

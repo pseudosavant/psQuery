@@ -8,6 +8,9 @@
             for (var i = 0, l = els.length; i < l; i++) {
                 fn(els[i], opts);
             }
+        },
+        isFunction: function(fn) {
+            return (!!fn && typeof fn === 'function');
         }
     };
 
@@ -34,12 +37,16 @@
         constructor: psQuery,
         init: function (selector) {
             if (!featureDetect()) {
-                return 'Cannot load. Required features not available';
+                throw 'Error: Cannot load psQuery. Required browser features are not available.';
             }
-            this.els = document.querySelectorAll(selector);
-            this.el = this.els[0];
 
-            return this;
+            try {
+                this.els = document.querySelectorAll(selector);
+                this.el = this.els[0];
+                return this;
+            } catch (e) {
+                return null;
+            }
         },
         eq: function (i) {
             var len = this.length,
@@ -167,34 +174,43 @@
         click: function(callback) {
             this.on('click', callback);
         },
-        on: function (event, callback) {
+        on: function (events) {
             var add = function (el, opts) {
-                var callback = opts.callback;
-                var event = opts.event;
-                el.addEventListener(event, callback, false);
+                var events = opts.events.split(' ');
+
+                for (var i = 0; i < events.length; i++) {
+                    el.addEventListener(events[i], opts.callback, false);
+                }
             };
+
+            var callbackArg = arguments[arguments.length - 1];
+            var callback = (utils.isFunction(callbackArg) ? callbackArg : null);
 
             var opts = {
                 els: this.els,
                 fn: add,
-                event: event,
+                events: events,
                 callback: callback
             };
 
             utils.loop(opts);
             return this;
         },
-        off: function(event, callback) {
+        off: function (events) {
             var remove = function (el, opts) {
-                var callback = opts.callback;
-                var event = opts.event;
-                el.removeEventListener(event, callback, false);
+                var events = opts.events.split(' ');
+                for (var i = 0; i < events.length; i++) {
+                    el.removeEventListener(events[i], opts.callback, false);
+                }
             };
+
+            var callbackArg = arguments[arguments.length - 1];
+            var callback = (utils.isFunction(callbackArg) ? callbackArg : null);
 
             var opts = {
                 els: this.els,
                 fn: remove,
-                event: event,
+                events: events,
                 callback: callback
             };
 

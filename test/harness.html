@@ -40,10 +40,10 @@
         </style>
     </head>
     <body>
-        <div class="test">This test is <strong>1</strong></div>
-        <div class="test">This test is <strong>2</strong></div>
-        <div class="test">This test is <strong>3</strong></div>
-        <div class="test">This test is <strong>4</strong></div>
+        <div class="test" title="test 1">This test is <strong>1</strong></div>
+        <div class="test" title="test 2">This test is <strong>2</strong></div>
+        <div class="test" title="test 3">This test is <strong>3</strong></div>
+        <div class="test" title="test 4">This test is <strong>4</strong></div>
         <h1>Classes Manipulation</h1>
         <button class="red" onclick="$test.addClass('red');">Add .red</button>
         <button class="bold" onclick="$test.addClass('bold');">Add .bold</button>
@@ -54,7 +54,6 @@
         <button class="underline" onclick="$test.removeClass('underline');">Remove .underline</button>
         <button class="red" onclick="$test.toggleClass('red');">.toggleClass .red</button>
         <button class="red" onclick="alert($test.hasClass('red'));">.hasClass .red</button>
-
 
         <h1>Get/Set HTML/Text</h1>
         <button onclick="alert($test.html());">Alert html</button>
@@ -82,9 +81,12 @@
         <button onclick="psQuery(document.querySelectorAll('.test')[2]).addClass('red');">$(document.querySelectorAll('.test')[2]);</button>
         <button onclick="$test.last().addClass('red');">$test.last()</button>
 
-        <h1>DOM Manipulation</h1>
+        <h1>DOM</h1>
         <button onclick="$test.last().remove();">$test.last().remove()</button>
         <button onclick="$test.remove();">$test.remove()</button>
+        <button onclick="alert($test.first().attr('title'));">$test.first().attr('title')</button>
+        <button onclick="$test.attr('title', 'new title');">$test.attr('title', 'new title')</button>
+
 
         <script src="../src/core.js"></script>
         <script>

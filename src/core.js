@@ -101,8 +101,8 @@
         last: function () {
             return this.nth(-1);
         },
-        parent: function(){
-
+        parent: function () {
+            return psQuery(this.els[0]);
         },
         children: function(){
 
@@ -265,8 +265,16 @@
         data: function () {
 
         },
-        attr: function () {
+        attr: function (attributeName, val) {
+            if (!val || typeof val !== 'string') {
+                return this.els[0].getAttribute(attributeName);
+            } else {
+                this.each(function () {
+                    this.setAttribute(attributeName, val);
+                });
+            }
 
+            return this;
         }
     };
 

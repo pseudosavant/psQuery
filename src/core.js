@@ -2,7 +2,7 @@
     'use strict';
     var debug = true;
 
-    var utils = global.utils = {
+    var utils = {
         isFunction: function(fn) {
             return (!!fn && typeof fn === 'function');
         },
@@ -94,6 +94,12 @@
         last: function () {
             return this.nth(-1);
         },
+        parent: function(){
+
+        },
+        children: function(){
+
+        },
         val: function(val) {
             if (val) {
                 this.each(function () {
@@ -138,6 +144,19 @@
             };
 
             this.each(set);
+        },
+        remove: function(){
+            this.each(function () {
+                this.parentElement.removeChild(this);
+            });
+
+            return this;
+        },
+        hasClass: function(){
+
+        },
+        toggleClass: function(){
+
         },
         addClass: function (classes) {
             var add = function () {
@@ -232,6 +251,10 @@
     global.psQuery = psQuery;
     if (!global.$) {
         global.$ = psQuery;
+    }
+
+    if (debug) {
+        global.utils = utils;
     }
 
 })(this);

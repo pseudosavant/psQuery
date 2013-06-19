@@ -79,6 +79,10 @@
         <button onclick="psQuery(document.querySelectorAll('.test')[2]).addClass('red');">$(document.querySelectorAll('.test')[2]);</button>
         <button onclick="$test.last().addClass('red');">$test.last()</button>
 
+        <h1>DOM Manipulation</h1>
+        <button onclick="$test.last().remove();">$test.last().remove()</button>
+        <button onclick="$test.remove();">$test.remove()</button>
+
         <script src="../src/core.js"></script>
         <script>
             var $test = psQuery('.test');

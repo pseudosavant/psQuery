@@ -55,7 +55,9 @@
                     this.els = document.querySelectorAll(selector);
                 }
 
-                if (this.els.length === 0) {
+                this.length = this.els.length;
+
+                if (this.length === 0) {
                     throw 'Error: No elements found with that selector.';
                 }
 
@@ -69,7 +71,8 @@
             }
         },
         each: function (fn) {
-            var els = this.els;
+            var els = this.els,
+                trueFalseCount = 0;
 
             if (!utils.isFunction(fn)) {
                 throw 'Error: no function supplied to loop.';
@@ -77,9 +80,13 @@
 
             for (var i = 0, l = els.length; i < l; i++) {
                 if (fn.call(els[i], i) === false) {
-                    break;
+                    trueFalseCount--;
+                } else {
+                    trueFalseCount++;
                 }
             }
+
+            return trueFalseCount;
         },
         nth: function(n) {
             var pos = (n < 0 ? this.els.length + n : n);
@@ -152,11 +159,28 @@
 
             return this;
         },
-        hasClass: function(){
+        hasClass: function (className) {
+            className = className.trim();
 
+            var result = this.each(function () {
+                return (this.className.indexOf(className) > -1);
+            });
+
+            return ((result + this.length) > 0);
         },
-        toggleClass: function(){
+        toggleClass: function(className){
+            className = className.trim();
 
+            this.each(function () {
+                var $this = $(this);
+                if ($this.hasClass(className)) {
+                    $this.removeClass(className);
+                } else {
+                    $this.addClass(className);
+                }
+            });
+
+            return this;
         },
         addClass: function (classes) {
             var add = function () {

@@ -44,7 +44,7 @@
         <div class="test">This test is <strong>2</strong></div>
         <div class="test">This test is <strong>3</strong></div>
         <div class="test">This test is <strong>4</strong></div>
-        <h1>Add/Remove Classes</h1>
+        <h1>Classes Manipulation</h1>
         <button class="red" onclick="$test.addClass('red');">Add .red</button>
         <button class="bold" onclick="$test.addClass('bold');">Add .bold</button>
         <button class="underline" onclick="$test.addClass('underline');">Add .underline</button>
@@ -52,6 +52,9 @@
         <button class="red" onclick="$test.removeClass('red');">Remove .red</button>
         <button class="bold" onclick="$test.removeClass('bold');">Remove .bold</button>
         <button class="underline" onclick="$test.removeClass('underline');">Remove .underline</button>
+        <button class="red" onclick="$test.toggleClass('red');">.toggleClass .red</button>
+        <button class="red" onclick="alert($test.hasClass('red'));">.hasClass .red</button>
+
 
         <h1>Get/Set HTML/Text</h1>
         <button onclick="alert($test.html());">Alert html</button>

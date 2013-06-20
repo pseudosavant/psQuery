@@ -1,0 +1,7 @@
+﻿{
+	"message": "Successfully retrieved a JSON file",
+	"arr": [0,1,2,3,4],
+	"obj": {
+		"key": "value"
+	}
+}

@@ -78,7 +78,7 @@
         <h1>Selector Tests</h1>
         <button onclick="psQuery('.test').first().addClass('red');">psQuery('.test').first()</button>
         <button onclick="$test.nth(1).addClass('red');">$test.nth(1)</button>
-        <button onclick="psQuery(document.querySelectorAll('.test')[2]).addClass('red');">$(document.querySelectorAll('.test')[2]);</button>
+        <button onclick="$(document.querySelectorAll('.test')[2]).addClass('red');">$(document.querySelectorAll('.test')[2]);</button>
         <button onclick="$test.last().addClass('red');">$test.last()</button>
 
         <h1>DOM</h1>
@@ -87,10 +87,16 @@
         <button onclick="alert($test.first().attr('title'));">$test.first().attr('title')</button>
         <button onclick="$test.attr('title', 'new title');">$test.attr('title', 'new title')</button>
 
+        <h1>AJAX</h1>
+        <button onclick="$.ajax({url: 'file.json', success: jsonSuccess, error: ajaxError, complete: ajaxComplete });">GET JSON</button>
+        <button onclick="$.ajax({url: 'file.txt', success: textSuccess, error: ajaxError, complete: ajaxComplete });">GET Text</button>
+        <button onclick="$.ajax({url: 'file.html', success: htmlSuccess, error: ajaxError, complete: ajaxComplete });">GET HTML</button>
+        <button onclick="$.ajax({url: 'fakefile.js', success: textSuccess, error: ajaxError, complete: ajaxComplete });">GET bad URL</button>
 
-        <script src="../src/core.js"></script>
+        <script src="../src/psQuery.js"></script>
+        <!--<script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>-->
         <script>
-            var $test = psQuery('.test');
+            var $test = $('.test');
 
             var alertClickListener = function (e) {
                 alert(e.target.innerHTML);
@@ -102,6 +108,27 @@
 
             var out = function () {
                 $(this).removeClass('red');
+            };
+
+            var jsonSuccess = function (data) {
+                alert(data.message);
+                console.log(data);
+            };
+
+            var textSuccess = function (data) {
+                alert(data);
+            };
+
+            var htmlSuccess = function (data) {
+                alert(data);
+            };
+
+            var ajaxComplete = function (data) {
+                alert('Complete Fired');
+            };
+
+            var ajaxError = function (data) {
+                alert('Error Fired');
             };
 
         </script>

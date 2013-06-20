@@ -1,10 +1,14 @@
 (function (global) {
     'use strict';
     var debug = true;
+    var type_string = 'string';
+    var typeMatch = function(o, type){
+        return (typeof o === type);
+    };
 
     var utils = {
         isFunction: function(fn) {
-            return (!!fn && typeof fn === 'function');
+            return (!!fn && typeMatch(fn, 'function'));
         },
         lastArgumentCallback: function (args, invoke) {
             var lastArgument = args[args.length - 1];
@@ -17,13 +21,25 @@
             } else {
                 return undefined;
             }
+        },
+        extend: function (target) {
+            Array.prototype.slice.call(arguments, 1)
+                .forEach(function (source) {
+                    for (var key in source) {
+                        if (source[key] !== undefined) {
+                            target[key] = source[key];
+                        }
+                    }
+            });
+            return target;
         }
     };
 
     var featureDetect = function () {
         var requiredFeatures = [
             JSON,
-            document.querySelectorAll
+            document.querySelectorAll,
+            global.XMLHttpRequest
         ];
 
         for (var i = 0; i < requiredFeatures.length; i++) {
@@ -51,7 +67,7 @@
                     throw 'Error: Invalid selector';
                 } else if (!!selector.nodeType && (selector.nodeType === 1 || selector.nodeType === 9)) {
                     this.els = [selector];
-                } else if (typeof selector === 'string') {
+                } else if (typeMatch(selector, type_string)) {
                     this.els = document.querySelectorAll(selector);
                 }
 
@@ -117,7 +133,7 @@
             }
         },
         html: function (html) {
-            if (typeof html === 'string') {
+            if (typeMatch(html, type_string)) {
                 this.each(function () {
                     this.innerHTML = html;
                 });
@@ -128,7 +144,7 @@
             }
         },
         text: function(text) {
-            if (typeof text === 'string') {
+            if (typeMatch(text, type_string)) {
                 this.each(function () {
                     this.innerText = text;
                 });
@@ -193,7 +209,7 @@
                 }
 
                 for (var j in uniques) {
-                    if (typeof j === 'string') {
+                    if (typeMatch(j, type_string)) {
                         union.push(j);
                     }
                 }
@@ -258,15 +274,11 @@
 
             return this;
         },
-        ajax: function (opts) {
-            opts = null;
-            return this;
-        },
         data: function () {
 
         },
         attr: function (attributeName, val) {
-            if (!val || typeof val !== 'string') {
+            if (!val || !typeMatch(val, type_string)) {
                 return this.els[0].getAttribute(attributeName);
             } else {
                 this.each(function () {
@@ -276,6 +288,101 @@
 
             return this;
         }
+    };
+
+    psQuery.ajax = function (url, settings) {
+        var args = arguments;
+        settings = (args.length === 1 ? args[0] : args[1]);
+
+        var emptyFunction = function () { };
+
+        var defaultSettings = {
+            url: (args.length === 2 && typeMatch(url, type_string) ? url : '.'),
+            cache: true,
+            data: {},
+            headers: {},
+            context: null,
+            type: 'GET',
+            success: emptyFunction,
+            error: emptyFunction,
+            complete: emptyFunction
+        };
+
+        settings = utils.extend(defaultSettings, settings || {});
+
+        var mimeTypes = {
+            'application/json': 'json',
+            'text/html': 'html',
+            'text/plain': 'text'
+        };
+
+        if (!settings.cache) {
+            settings.url = settings.url +
+                            (settings.url.indexOf('?') ? '&' : '?') +
+                            'noCache=' +
+                            Math.floor(Math.random() * 9e9);
+        }
+
+        var success = function (data, xhr, settings) {
+            var status = 'success';
+            settings.success.call(settings.context, data, status, xhr);
+            complete(status, xhr, settings);
+        };
+
+        var error = function (error, type, xhr, settings) {
+            settings.error.call(settings.context, xhr, type, error);
+            complete(type, xhr, settings);
+        };
+
+        var complete = function (status, xhr, settings) {
+            settings.complete.call(settings.context, xhr, status);
+        };
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.addEventListener('readystatechange', function () {
+            if (xhr.readyState === 4) {
+                var result, dataType;
+
+                if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
+                    var mime = xhr.getResponseHeader('content-type');
+                    dataType = mimeTypes[mime] || 'text';
+                    result = xhr.responseText;
+                    console.log(result);
+                    try {
+                        if (dataType === 'json') {
+                            result = JSON.parse(result);
+                        }
+
+                        success(result, xhr, settings);
+                        return;
+                    } catch (e) {
+                        
+                    }
+                }
+
+                error(null, 'error', xhr, settings);
+                return;
+            }
+        }, false);
+
+
+        xhr.open(settings.type, settings.url);
+
+        if (settings.type === 'POST') {
+            settings.headers = utils.extend(settings.headers, {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-type': 'application/x-www-form-urlencoded'
+            });
+        }
+
+        for (var key in settings.headers) {
+            xhr.setRequestHeader(key, settings.headers[key]);
+        }
+
+        xhr.send(settings.data);
+
+        return this;
     };
 
     psQuery.fn.init.prototype = psQuery.fn;

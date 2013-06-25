@@ -1,0 +1,37 @@
+﻿<!doctype html>
+<html>
+    <head>
+        <title>psQuery Test</title>
+        <style>
+            html {
+                font-family: Calibri, Arial, sans-serif;
+                font-size: 12px;
+            }
+
+            h1 {
+                font-size: 1.25em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="test jQuery">jQuery: <span></span></div>
+        <div class="test psQuery">psQuery: <span></span></div>
+        <script src="../src/psQuery.min.js"></script>
+        <script src="jquery-2.0.2.min.js"></script>
+        <script>
+            (function (global) {
+                var jq = global.ps.timings.jQuery,
+                    psq = global.ps.timings.psQuery;
+
+                var loadTimes = {
+                    jQuery: jq.end - jq.start,
+                    psQuery: psq.end - psq.start
+                };
+
+                $('.test.jQuery span').html(loadTimes.jQuery);
+                $('.test.psQuery span').html(loadTimes.psQuery);
+
+            })(this);
+        </script>
+    </body>
+</html>

@@ -1,5 +1,8 @@
 (function (global) {
     'use strict';
+
+    var start = +new Date();
+    
     var debug = true;
     var type_string = 'string';
     var typeMatch = function(o, type){
@@ -395,5 +398,12 @@
     if (debug) {
         global.utils = utils;
     }
+
+    global.ps = global.ps || {};
+    global.ps.timings = global.ps.timings || {};
+    global.ps.timings.psQuery = {
+        start: start,
+        end: +new Date()
+    };
 
 })(this);

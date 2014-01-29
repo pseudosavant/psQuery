@@ -220,7 +220,9 @@
                 this.className = union.join(' ').trim();
             };
 
-            this.each(add);
+            if (typeMatch(classes, type_string)) {
+                this.each(add);
+            }
             return this;
         },
         removeClass: function(classes){

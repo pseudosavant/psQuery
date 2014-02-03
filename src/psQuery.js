@@ -1,3 +1,7 @@
+// psQuery
+// http://pseudosavant.com
+// License: MIT
+
 (function (global) {
     'use strict';
 

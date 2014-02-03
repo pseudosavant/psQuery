@@ -27,4 +27,4 @@ you then drop me a line, or even better, a pull request.
 
 License
 -------
-psQuery is open-srouce and uses the MIT license
+psQuery is open-source and uses the **MIT license**

@@ -24,3 +24,7 @@ psQuery is WIP
 psQuery is a work-in-progress. So far only the core ajax, CSS, and some
 DOM methods are supported. If there is something that isn't working for
 you then drop me a line, or even better, a pull request.
+
+License
+-------
+psQuery is open-source and uses the **MIT license**

@@ -7,7 +7,7 @@ psQuery is a jQuery-like DOM library. It aims to cover just
 the 'core' jQuery use cases (CSS, ajax, DOM) using 'modern'
 native methods (`JSON`, `document.querySelectorAll`, etc) so
 that it can be fast and light. In some ways it was inspired
-by Zepto.js but with IE8+ compatibility in mind. It does this
+by Zepto.js but with IE9+ compatibility in mind. It does this
 all in less than 2kb gzipped+minified.
 
 psQuery targets most non-deprecated methods from the jQuery 2.1+ API

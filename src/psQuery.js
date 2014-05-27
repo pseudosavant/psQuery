@@ -353,7 +353,7 @@
                     var mime = xhr.getResponseHeader('content-type');
                     dataType = mimeTypes[mime] || 'text';
                     result = xhr.responseText;
-                    console.log(result);
+
                     try {
                         if (dataType === 'json') {
                             result = JSON.parse(result);

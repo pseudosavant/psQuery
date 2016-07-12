@@ -19,6 +19,17 @@ except for these:
 * Custom jQuery Selectors (e.g. `:eq`, `:has`, etc)
 * Most event shorthands
 
+How to use
+----------
+psQuery can be embedded in a page just like jQuery.
+e.g. `<script src="psQuery.js"></script>`
+
+Try it out
+----------
+You can try it for development without even downloading it by
+leveraging the great Rawgit service. This code will always embed 
+the latest version of psQuery: `<script src='https://rawgit.com/pseudosavant/psQuery/master/src/psQuery.min.js'></script>`.
+
 psQuery is WIP
 --------------
 psQuery is a work-in-progress. So far only the core ajax, CSS, and some
